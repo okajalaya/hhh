@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitor ESP32</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .led-on {
+            color: green;
+        }
+        .led-off {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>ESP32 Monitor</h2>
+
+    <p>Nilai Potensio</p>
+    <div class="value" id="pot">---</div>
+
+    <p>Status LED</p>
+    <div class="value" id="led">---</div>
+</div>
+
+<script>
+const ESP32_IP = "http://192.168.4.1";
+
+setInterval(() => {
+    fetch(ESP32_IP + "/data")
+        .then(res => res.json())
+        .then(data => {
+            // tampilkan potensio
+            document.getElementById("pot").innerText = data.potensio;
+
+            // tampilkan LED
+            const ledText = document.getElementById("led");
+            if (data.led === 1) {
+                ledText.innerText = "ON";
+                ledText.className = "value led-on";
+            } else {
+                ledText.innerText = "OFF";
+                ledText.className = "value led-off";
+            }
+        })
+        .catch(() => console.log("ESP32 belum terhubung"));
+}, 500);
+</script>
+
+</body>
+</html>
